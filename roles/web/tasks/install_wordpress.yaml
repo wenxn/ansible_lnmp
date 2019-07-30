@@ -1,0 +1,7 @@
+- name: install wordpress
+  get_url: url=http://wordpress.org/latest.tar.gz dest=/usr/local/latest.tar.gz
+
+- name: tar wordpress
+  unarchive: 
+    src=/usr/local/latest.tar.gz
+    dest=/usr/local/

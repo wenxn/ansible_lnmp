@@ -1,0 +1,49 @@
+---
+- host: lvs
+  gather_facts: no
+  tasks:
+  - name: install lvs
+    include_role:
+      name: lvs
+      tasks_from: install_lvs 
+
+  - name: deploy lvs and keepalive
+    include_role:
+      name: lvs
+      tasks_from: deploy_lvs
+
+- hosts: nginx
+  gather_facts: no
+  tasks: 
+  - name: install nginx
+    include_role:
+      name: nginx
+      tasks_from: install_nginx
+
+- hosts: web
+  gather_facts: no
+  tasks:
+  - name: install wordpress
+    include_role:
+      name: web
+      tasks_from: install_wordpress
+
+  - name: install php-fpm
+    include_role:
+      name: web
+      tasks_from: install_php-fpm
+
+  - name: install nginx
+    include_role:
+      name: web
+      tasks_from: install_nginx
+
+  - name: copy nginx.conf
+    include_role:
+      name: web
+      tasks_from: copy_conf
+
+  - name: install mysql
+    include_role:
+      name: mysql
+      tasks_from: install_mysql

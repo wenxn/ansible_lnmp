@@ -1,0 +1,22 @@
+- name: update mysql source
+  yum: 
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
+
+- name: add mysql to epel.repo
+  yum_repository:
+    name: mysql57-community
+    description: mysql 5.7 repo
+    file: epel
+    baseurl: https://mirrors.tuna.tsinghua.edu.cn/mysql/yum/mysql57-community-el7/
+    enabled: yes
+    gpgcheck: no
+
+- name: install mysql
+  yum: name={{item.name}} state=present
+  with_items: 
+    - name: "mysql-community-server" 
+    - name: "mysql-community-devel"
+
+- name: start mysql service
+  service: name=mysqld state=started enabled=true

@@ -1,0 +1,16 @@
+---
+- hosts: mysql
+  gather_facts: no
+  tasks:
+  - name: create mysql database
+    mysql_db:
+      name: wordpress
+      state: present
+
+  - name: create mysql user
+    mysql_user:
+      name: wordpress
+      host: '%'
+      password: 'password'
+      priv: 'wordpress.*:ALL,GRANT'
+      state: present

@@ -1,0 +1,20 @@
+- name: copy nginx conf file
+  template: 
+    src=/etc/ansible/roles/web/files/nginx.conf dest=/etc/nginx/nginx.conf
+  notify: restart nginx
+
+- name: mkdir nginx root 
+  file: path=/data/www state=directory
+
+- name: update power
+  file:
+    path: /data/www
+    owner: nginx
+    group: nginx
+    mode: '1755'
+
+- name: copy wordpress files
+  synchronize: 
+    src=/usr/local/wordpress/
+    dest=/data/www
+

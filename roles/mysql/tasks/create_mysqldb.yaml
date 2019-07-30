@@ -1,0 +1,34 @@
+- name: get root password
+  shell: grep 'temporary password' /var/log/mysqld.log |tail -n 1 | awk 'END {print $11}'
+  register: root_pas
+
+- name: print root pass
+  debug: 
+    msg: '{{root_pas.stdout}}'
+
+- name: set password
+  set_fact:
+    outer_item: "{{ root_pas.stdout }}"
+
+- name: create my.cnf
+  template: 
+    src: /etc/ansible/roles/mysql/files/my.cnf.j2
+    dest: /root/.my.cnf
+
+#- name: Set the mysql database password
+#  shell: /usr/bin/mysqladmin -u root password '123456'
+#- name: exchange root password
+#  shell: sed -i "s/password='123456'/password='{{outer_item}}'/g" /root/.my.cnf
+    
+#- name: create mysql database
+#  mysql_db:
+#    name: wordpress
+#    state: present
+
+#- name: create mysql user
+#  mysql_user:
+#    name: wordpress
+#    host: '%'
+#    password: 'wohenhao23QQ;'
+#    priv: 'wordpress.*:ALL,GRANT'
+#    state: present

@@ -1,0 +1,34 @@
+---
+- host: web
+  tasks:
+  - name: install wordpress
+    include_role:
+      name: web
+      tasks_from: install_wordpress
+
+  - name: install php-fpm
+    include_role:
+      name: web
+      tasks_from: install_php-fpm
+
+  - name: install nginx
+    include_role:
+      name: nginx
+      tasks_from: install_nginx
+
+  - name: copy nginx.conf
+    include_role:
+      name: nginx
+      tasks_from: copy_conf
+
+- host: mysql
+  tasks:
+  - name: install mysql
+    include_role:
+      name: mysql
+      tasks_from: install_mysql
+
+  - name: create mysqldb
+    include_role:
+      name: mysql
+      tasks_from: create_mysqldb

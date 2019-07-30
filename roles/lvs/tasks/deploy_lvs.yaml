@@ -1,0 +1,24 @@
+- name: copy vip messages
+  shell: 
+    ifconfig ens33:0 172.16.13.8 broadcast 172.16.13.8 netmask 255.255.255.0 up
+    
+- name: deploy vip
+  shell:
+    echo 1 > /proc/sys/net/ipv4/ip_forward
+    route add -host 172.16.13.8 dev ens33:0
+    ipvsadm -C
+    ipvsadm -A -t 172.16.13.8:80 -s rr -p 600
+    ipvsadm -a -t 172.16.13.8:80 -r 172.16.13.6:80 -g
+    ipvsadm -a -t 172.16.13.8:80 -r 172.16.13.7:80 -g
+    ipvsadm -S
+
+- name: deploy keepalived
+  template:
+    src=/etc/ansible/roles/lvs/files/keepalived.conf.j2  dest=/etc/keepalived/keepalived.conf
+  notify: restart keepalived
+
+- name: start ipvsadm service
+  service: name=ipvsadm state=started enabled=true
+
+- name: start keepalived service
+  service: name=keepalived state=started enabled=true

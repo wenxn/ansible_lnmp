@@ -1,0 +1,22 @@
+- name: install latest yum source and nginx
+  yum: name=nginx state=present
+
+- name: start nginx service
+  systemd: name=nginx state=started enabled=true
+
+- name: deploy lo port
+  shell: 
+    /sbin/ifconfig lo:0 172.16.13.8 netmask 255.255.255.255 broadcast 172.16.13.8
+    /sbin/route add -host 172.16.13.8 dev lo:0
+    echo "1" >/proc/sys/net/ipv4/conf/lo/arp_ignore
+    echo "2" >/proc/sys/net/ipv4/conf/lo/arp_announce
+    echo "1" >/proc/sys/net/ipv4/conf/all/arp_ignore
+    echo "2" >/proc/sys/net/ipv4/conf/all/arp_announce
+
+- name: copy nginx.conf
+  copy:
+    src: /etc/ansible/roles/nginx/files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+  notify: restart nginx
+
+
